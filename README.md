@@ -4,7 +4,7 @@ Fibonacci
 
 CONTENT
 -------
-	Description
+        Description
         Features
         Installation
         Contributing
