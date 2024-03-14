@@ -15,7 +15,7 @@ This application is build using rust, it is aimed at generating fibonacci number
 
 FEATURE(S)
 ----------
-Genarate fibonacci numbers
+Genarate fibonacci numbers.
 
 INSTALLATION
 ------------
