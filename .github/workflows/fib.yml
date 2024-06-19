@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   build:
@@ -23,14 +25,20 @@ jobs:
           profile: minimal
           override: true
 
+      - name: Set up working directory
+        run: cd your_project_directory
+
       - name: Install Dependencies
         run: cargo fetch
+        working-directory: your_project_directory
 
       - name: Run Tests
         run: cargo test
+        working-directory: your_project_directory
 
       - name: Build Project
         run: cargo build --release
+        working-directory: your_project_directory
 
   deploy:
     runs-on: self-hosted
@@ -48,12 +56,19 @@ jobs:
           profile: minimal
           override: true
 
+      - name: Set up working directory
+        run: cd your_project_directory
+
       - name: Install Dependencies
         run: cargo fetch
+        working-directory: your_project_directory
 
       - name: Build Project
         run: cargo build --release
+        working-directory: your_project_directory
 
       - name: Deploy to Production
         run: |
-          
+          # Add your deployment script/command here
+          echo "Deploying to production..."
+        working-directory: your_project_directory
