@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -24,21 +24,45 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+          components: rustfmt, clippy
 
-      - name: Set up working directory
-        run: cd your_project_directory
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('fib/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('fib/Cargo.lock') }}
+
+      - name: Cache target directory
+        uses: actions/cache@v3
+        with:
+          path: fib/target
+          key: ${{ runner.os }}-target-${{ hashFiles('fib/Cargo.lock') }}
 
       - name: Install Dependencies
         run: cargo fetch
-        working-directory: your_project_directory
+        working-directory: fib
+
+      - name: Check formatting
+        run: cargo fmt -- --check
+        working-directory: fib
+
+      - name: Run clippy
+        run: cargo clippy -- -D warnings
+        working-directory: fib
 
       - name: Run Tests
         run: cargo test
-        working-directory: your_project_directory
+        working-directory: fib
 
       - name: Build Project
         run: cargo build --release
-        working-directory: your_project_directory
+        working-directory: fib
 
   deploy:
     runs-on: self-hosted
@@ -47,7 +71,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -56,19 +80,34 @@ jobs:
           profile: minimal
           override: true
 
-      - name: Set up working directory
-        run: cd your_project_directory
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('fib/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('fib/Cargo.lock') }}
+
+      - name: Cache target directory
+        uses: actions/cache@v3
+        with:
+          path: fib/target
+          key: ${{ runner.os }}-target-${{ hashFiles('fib/Cargo.lock') }}
 
       - name: Install Dependencies
         run: cargo fetch
-        working-directory: your_project_directory
+        working-directory: fib
 
       - name: Build Project
         run: cargo build --release
-        working-directory: your_project_directory
+        working-directory: fib
 
       - name: Deploy to Production
         run: |
           # Add your deployment script/command here
           echo "Deploying to production..."
-        working-directory: your_project_directory
+        working-directory: fib
